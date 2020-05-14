@@ -9,17 +9,17 @@ data ConfigRegister = ConfigRegister{
     won :: Bool, 
     t_power :: Bool, 
     mclr :: Bool,
-    codeprotect :: Bool.
+    codeprotect :: Bool,
     bor :: Bool,
     clkout :: Bool,
     ieso :: Bool,
-    fcm :: Bool.
+    fcm :: Bool,
     wr :: Bool,
     pps1way :: Bool,
     zcddis :: Bool,
     pll :: Bool,
     stvr :: Bool,
-    bor :: Bool,
+    bors :: Bool,
     lpbor :: Bool,
     lvp :: Bool
     }

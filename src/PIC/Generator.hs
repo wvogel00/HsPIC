@@ -66,5 +66,5 @@ genRecords :: [Expr] -> [Record]
 genRecords = concat.map genRecord
 
 genRecord :: Expr -> [Record]
-genRecord expr = testRecord
+genRecord expr = [testRecord]
 
