@@ -6,6 +6,7 @@ import Data.Bits.Extras (w8)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as BC
 import Codec.CBOR.Magic 
+import PIC.Types
 
 testRecord = Record {
     len = 16,
@@ -61,6 +62,9 @@ outputRecFormat rec = B.append (BC.pack ":") $
         (B.singleton.w8 $ len rec) `B.append` (offset rec) `B.append`
         (rectypeBits $ rectype rec) `B.append` (littleEndian $ _data rec) `B.append` (chksum rec)
 
+genRecords :: [Expr] -> [Record]
+genRecords = concat.map genRecord
 
-
+genRecord :: Expr -> [Record]
+genRecord expr = testRecord
 
