@@ -39,6 +39,7 @@ rectypeBits StartSegmentAddr= B.singleton 3
 rectypeBits ExLinearAddr    = B.singleton 4
 rectypeBits StartLinearAddr = B.singleton 5
 
+-- チェックサムを計算し付与する
 insertChkSum :: Record -> B.ByteString
 insertChkSum rec = B.singleton.complement2.B.foldl1 (+)
         $ (B.singleton.w8 $ len rec) `B.append` (offset rec) `B.append` (rectypeBits $ rectype rec) `B.append` (_data rec)
@@ -47,13 +48,14 @@ insertChkSum rec = B.singleton.complement2.B.foldl1 (+)
 add w1 w2 = w8 $ mod (word8ToInt w1 + word8ToInt w2) 255
 complement2 = add (w8 1).complement
 
---リトルエンディアンに変換
---littleEndian :: B.ByteString -> B.ByteString
+-- リトルエンディアンに変換
+-- littleEndian :: B.ByteString -> B.ByteString
 littleEndian = B.pack.convert.B.unpack where
     convert [] = []
     convert [a] = [w8 0, a]
     convert (w1:w2:bs) = w2:w1:convert bs
 
+-- HEXファイルの出力時に呼ぶ関数
 outputHexFile :: FilePath -> [Record] -> IO ()
 outputHexFile file = B.writeFile file.BC.unlines.map outputRecFormat
 
@@ -62,9 +64,11 @@ outputRecFormat rec = B.append (BC.pack ":") $
         (B.singleton.w8 $ len rec) `B.append` (offset rec) `B.append`
         (rectypeBits $ rectype rec) `B.append` (littleEndian $ _data rec) `B.append` (chksum rec)
 
+-- 解析した式からHEXを生成する時に呼ぶ関数
 genRecords :: [Expr] -> [Record]
 genRecords = concat.map genRecord
 
+-- 一つの式からレコード群を生成する
 genRecord :: Expr -> [Record]
 genRecord expr = [testRecord]
 

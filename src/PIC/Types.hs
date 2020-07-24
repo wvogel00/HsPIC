@@ -1,7 +1,8 @@
 module PIC.Types where
 
 data Expr =
-    Func String [Expr]
+    Register ConfigRegister
+    | Func String [Expr]
     | Boolean Bool
     | Var String
     | INumber Int
