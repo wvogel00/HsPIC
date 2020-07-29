@@ -1,7 +1,5 @@
 module PIC.Devices where
 
-data Device = P16F1705 deriving (Eq, Show)
-
 data ClockType = Internal | External deriving (Eq,Show)
 
 data ConfigRegister = ConfigRegister{
