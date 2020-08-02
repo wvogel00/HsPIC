@@ -42,6 +42,9 @@ data Expr =
     | WHILE Expr Expr
     deriving (Eq, Show)
 
+parserP10 :: Expr -> [P10.IntructionSets]
+parserP10 Register 
+
 -- 使えるアセンブラ種類で分類
 -- 12,16は8bit命令, 18は16bit命令, 16F17xxは16bit命令
 data PIC = PIC10F Int | PIC12F Int | PIC16F Int

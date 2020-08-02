@@ -65,6 +65,7 @@ asmToBin SLEEP          = map fromIntegral [0b0000, 0b0011]
 asmToBin (TRIS f)       = map fromIntegral [0b0000, fValue f]
 asmToBin (XORLW k)      = map fromIntegral [0b1111,      k]
 
+data PinType = Input | Output | InOut | CLK | Vdd | Vss | NC
 
 -- 0 <= f <= 31, d = {0,1}, 0 <= k <= 511, 0 <= b <= 7
 data IntructionSets = ADDWF FRegister DFlag
@@ -100,4 +101,25 @@ data IntructionSets = ADDWF FRegister DFlag
     | SLEEP
     | TRIS FRegister
     | XORLW KValue
+    | Label
     deriving (Eq, Show)
+
+data P10Register = INDF
+    | TMR0
+    | PCL
+    | STATUS
+    | FSR
+    | OSCCAL
+    | GPIO
+    | CMCON
+    deriving (Eq, Show)
+
+registerAddress :: P10Register -> Word8
+registerAddress INDF    = 0x00
+registerAddress TMR0    = 0x01
+registerAddress PCL     = 0x02
+registerAddress STATUS  = 0x03
+registerAddress FSR     = 0x04
+registerAddress OSCCAL  = 0x05
+registerAddress GPIO    = 0x06
+registerAddress CMCON   = 0x07
