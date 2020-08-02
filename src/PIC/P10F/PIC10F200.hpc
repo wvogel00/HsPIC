@@ -1,0 +1,33 @@
+module PIC10F200 where
+
+setDirections directions = |assembly|
+    movlw direction
+    tris gpio
+
+set pin level = |assembly|
+    movlw level
+    movwf gpio
+
+waitMs ms = |assembly|
+    :label1
+    movlw ms
+    movwf f
+    decfsz ms f
+    goto :label1
+
+{-
+    LED BLINK sample
+
+led = 0b0001
+
+blink ms = do
+    set led high
+    waitMs ms
+    set led low
+    waitMs ms
+    blink ms
+
+main = do
+    setDirections bOOOO
+    blink 500
+-}
