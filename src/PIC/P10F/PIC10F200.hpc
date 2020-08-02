@@ -1,4 +1,4 @@
-module PIC10F200 where
+{-# DEVICE PIC10F200 #-}
 
 setDirections directions = |assembly|
     movlw direction

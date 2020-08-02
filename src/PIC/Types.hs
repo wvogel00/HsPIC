@@ -28,6 +28,8 @@ data ConfigRegister = ConfigRegister{
     }
     deriving (Eq, Show)
 
+data LanguageOption = Assembly deriving (Eq, Show)
+
 data Expr =
     Register Bool
     | Func String [Expr]
@@ -41,9 +43,6 @@ data Expr =
     | IF Expr Expr Expr
     | WHILE Expr Expr
     deriving (Eq, Show)
-
-parserP10 :: Expr -> [P10.IntructionSets]
-parserP10 Register 
 
 -- 使えるアセンブラ種類で分類
 -- 12,16は8bit命令, 18は16bit命令, 16F17xxは16bit命令
