@@ -1,10 +1,41 @@
-{-# DEVICE PIC10F200 #-}
+module PIC10F200 where (High, Low, setDirections, write, read, waitMs)
+
+High = 1
+Low = 0
+
+Input = 1
+Output = 0
+
+data GPIO = GPIO0 | GPIO1 | GPIO2 | GPIO3
+
+-- 値を返す関数はいずれも，Wレジスタに値を返す
 
 setDirections directions = |assembly|
     movlw direction
     tris gpio
 
-set pin level = |assembly|
+setDirection pin Input = do
+    case pin of
+        GPIO0 ->  |assembly|
+            bsf gpio 0
+        GPIO1 ->  |assembly|
+            bsf gpio 1
+        GPIO2 ->  |assembly|
+            bsf gpio 2
+        GPIO3 ->  |assembly|
+            bsf gpio 3
+setDirection pin Output = do
+    case pin of
+        GPIO0 ->  |assembly|
+            bcf gpio 0
+        GPIO1 ->  |assembly|
+            bcf gpio 1
+        GPIO2 ->  |assembly|
+            bcf gpio 2
+        GPIO3 ->  |assembly|
+            bcf gpio 3
+
+write pin level = |assembly|
     movlw level
     movwf gpio
 
@@ -15,19 +46,65 @@ waitMs ms = |assembly|
     decfsz ms f
     goto :label1
 
+-- Wレジスタに読み込んだ値を格納
+read pin = do
+    let x = case pin of
+        GPIO0 ->  0
+        GPIO1 ->  1
+        GPIO2 ->  2
+        GPIO3 ->  3
+    |assembly|
+        movf 0x00 w
+        btfsc gpio x
+        movf 0x01 w
+
+-- 割り込み関数
+-- PIC10F200にはない機能
+
 {-
-    LED BLINK sample
+-- LED BLINK sample
 
-led = 0b0001
+-- Basic.hpcにあるライブラリは標準で読み込まれる
+-- その他のライブラリを読み込むときは，import Hoge と記述する
 
-blink ms = do
-    set led high
-    waitMs ms
-    set led low
-    waitMs ms
-    blink ms
+--  使用するデバイスの指定
+{-# DEVICE PIC10F200 #-}
+
+-- ピン設定
+led1 = GPIO0
+led2 = GPIO1
+button = GPIO2
+
+-- 割り込みフラグは関数を抜けるときにクリアされる
+-- フラグを手動でクリアしたいときは，unsafeEventOf関数と，clearFlag関数を使う
+-- PIC10F200に割り込み機能はないので，将来的に追加
+inputEvent
+    | eventOf (rising button) = invert led2
+
+-- 再帰関数
+-- 一行に複数の式をかける
+blink _ 0 = do nothing
+blink ms k = do
+    set led1 High >> waitMs ms
+    set led1  Low >> waitMs ms
+    blink ms (k-1)
+
+mySetting = initRegister {clock = 4MHz}
+
+testStr = "hello, world!"
 
 main = do
-    setDirections bOOOO
-    blink 500
+    setRegisters mySetting
+    setDirection GPIO2 Input
+    setInterrupt inputEvent -- PIC10F200にはない機能
+
+    let N = 8
+    let xs = array int [N]
+
+    blink 1000ms 5
+    for (i : 0 .. N)
+        if mod i 2 == 0 then xs[i] = i else xs[i] = i*2
+        case testStr[i] of
+            '!' -> blink 200ms 2
+            _   -> do nothing
 -}
